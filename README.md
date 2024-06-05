@@ -8,11 +8,14 @@ Ensure you have the **Prettier** extension installed in your Visual Studio Code 
 ## Installing
 
 git clone 'https://github.com/Capstone-Butterfly/Getchup_BackEnd.git' Getchup_FrontEnd
+
 cd Getchup_FrontEnd
+
 npm install
+
 create .env file with the keys that we share in our slack's canvas
 
-## Start the backend server
+## Start the Backend Server
 
 npm run dev
 
@@ -20,9 +23,9 @@ npm run dev
 
 You can test your site in a web browser at `http://localhost:8080/`
 
-## RESFUL API Struckture
+## RESFUL API Structure
 
-We will use modules, models and routes folder structure.
+We'll adopt a folder structure incorporating modules, models, and routes.
 
 ## Best Practices
 
