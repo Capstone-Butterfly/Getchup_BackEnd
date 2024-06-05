@@ -30,7 +30,9 @@ We will use modules, models and routes folder structure.
 - Regularly pull the latest code and rebase with the remote branch.
 - Write commit messages that are meaningful and in the present tense (git commit -m "feat: P2S-142 .....").
 - Conduct thorough testing before merging changes into the develop branch.
-- Request review from other developers and wait for the approval before merge with develop.
+- Request review from other developers and wait for the approval before merging with development brabch.
+- The developer assignee is responsible for merging the branch when it is approved.
+- After the merge, the branch has to be auto deleted from the repository.
 - After completing a task, remember to checkout to a new branch.
 - Strive to write code that is free of bugs.
 
