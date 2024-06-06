@@ -1,4 +1,4 @@
-# Getchup FrontEnd
+# Getchup BackEnd
 
 ## Prerequisites
 
@@ -9,13 +9,13 @@ Ensure you have the **Prettier** extension installed in your Visual Studio Code 
 
 git clone 'https://github.com/Capstone-Butterfly/Getchup_BackEnd.git' Getchup_FrontEnd
 
-cd Getchup_FrontEnd
+cd Getchup_BackEnd
 
 npm install
 
 create .env file with the keys that we share in our slack's canvas
 
-## Start the Backend Server
+## Start the Server
 
 npm run dev
 
