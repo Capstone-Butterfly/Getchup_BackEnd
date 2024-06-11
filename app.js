@@ -9,7 +9,7 @@ require('./models/db');
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/v1', router)
+app.use('/api/v1', router);
 
 app.get("/", (req, res, next) => {
    res.json({

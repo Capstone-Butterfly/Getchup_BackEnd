@@ -7,7 +7,7 @@ const subtaskSchema = new Schema({
       required: true
     },
     time: {
-      type: Number,
+      type: String,
       required: true
     },
     start_time: {

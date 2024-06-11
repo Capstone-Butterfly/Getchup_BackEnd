@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+const OpenAI = require('openai');
 require('dotenv').config();
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -24,8 +24,9 @@ const getSubTasksFromOpenAI = async (mainTask) => {
         model: "gpt-3.5-turbo",
         max_tokens: 500,
       });
-  
-      return completion.choices[0].message.content;
+      const aiResponse = completion.choices[0].message.content;
+      console.log("aiResponse : ", aiResponse);
+      return aiResponse;
       // Send request to OpenAI API to generate subtasks
   
     } catch (error) {
@@ -45,5 +46,5 @@ const getSubTasksFromOpenAI = async (mainTask) => {
     }
   };
   
-  export default getSubTasksFromOpenAI;
+  module.exports = getSubTasksFromOpenAI;
 
