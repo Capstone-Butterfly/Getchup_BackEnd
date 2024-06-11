@@ -17,18 +17,15 @@ const getSubTasksFromOpenAI = async (mainTask) => {
       ]
       }
       `;
-      console.log(prompt)
   
       const completion = await openai.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
         model: "gpt-3.5-turbo",
         max_tokens: 500,
       });
+
       const aiResponse = completion.choices[0].message.content;
-      console.log("aiResponse : ", aiResponse);
       return aiResponse;
-      // Send request to OpenAI API to generate subtasks
-  
     } catch (error) {
       if (error.response) {
         // The request was made and the server responded with a status code

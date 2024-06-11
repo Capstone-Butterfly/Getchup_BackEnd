@@ -6,14 +6,11 @@ const saveTask = async (req, res) => {
     try {
         
         const { title, ...taskData } = req.body;
-        console.log("title : ", title);
-        console.log("taskData : ", taskData);
         
         // Get subtasks from OpenAI
         const subTaskResponse = await getSubTasksFromOpenAI(title);
         const subTasks = JSON.parse(subTaskResponse).subtasks;
     
-        console.log("subTasks : ", subTasks);
         // Create new task with subtasks
         const task = new Task({
           title,
@@ -26,7 +23,6 @@ const saveTask = async (req, res) => {
           }))
         });
 
-        console.log("AddTasks : ", task);
         const result = await task.save();
         const urlStr = `/api/v1/task/${result.id}`;
         
