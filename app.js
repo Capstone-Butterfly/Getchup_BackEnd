@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const router = require('./routes'); //same as ('./routes/index')
+const authRoutes = require('./routes/authRoutes');
 
 require('./models/db');
 
@@ -10,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/v1', router);
-
+app.use('/api/auth', authRoutes);
 app.get("/", (req, res, next) => {
    res.json({
         status:200,
