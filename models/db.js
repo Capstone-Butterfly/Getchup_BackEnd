@@ -3,7 +3,11 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", true);
 const dbURI = process.env.DB_URI; // Use process.env to access variables loaded from .env
-mongoose.connect(dbURI, { useNewUrlParser: true });
+mongoose.connect(dbURI, { 
+  useNewUrlParser: true,
+  //useUnifiedTopology: true,
+  //useCreateIndex: true,
+});
 
 mongoose.connection.on("connected", () => {
   console.log(`Mongoose connected to ${dbURI}`);
