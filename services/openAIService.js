@@ -10,10 +10,14 @@ const getSubTasksFromOpenAI = async (mainTask) => {
       // Construct prompt including main task
       const prompt = `Here is the main task: ${mainTask} , along with estimated times and will it involve the movement for each task . 
       Please generate subtasks based on it without explanation. The JSON structure should follow this pattern:
-      subtasks: { [
-        task: "subtask description"
-        time: "5 minutes"
-        movement: true or false
+      {
+      "main_task": "main task title",
+      "estimated_time": "15 minutes",
+      "will_involve_movement": "true or false",
+      "subtasks": { [
+        "task": "subtask description"
+        "time": "5 minutes"
+        "movement": "true" or "false"
       ]
       }
       `;
@@ -21,7 +25,7 @@ const getSubTasksFromOpenAI = async (mainTask) => {
       const completion = await openai.chat.completions.create({
         messages: [{ role: "user", content: prompt }],
         model: "gpt-3.5-turbo",
-        max_tokens: 500,
+        max_tokens: 1500,
       });
 
       const aiResponse = completion.choices[0].message.content;
