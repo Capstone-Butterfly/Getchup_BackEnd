@@ -6,6 +6,7 @@ const authRouter = require('./auth');
 const commonTaskRouter = require('./commonTask');
 
 router.use(taskRouter);
+router.use(commonTaskRouter);
 router.use(authRouter);
 
 router.use(commonTaskRouter);
