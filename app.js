@@ -14,6 +14,7 @@ app.get("/", (req, res, next) => {
    res.json({
         status:200,
         message: "Hello from Getchup!! Testing for CI/CD."
+
    })
 });
 
