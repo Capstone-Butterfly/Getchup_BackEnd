@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 const router = require('./routes'); //same as ('./routes/index')
+require('dotenv').config();
 
 require('./models/db');
 
@@ -13,7 +14,7 @@ app.use('/api/v1', router);
 app.get("/", (req, res, next) => {
    res.json({
         status:200,
-        message: "Hello from Getchup!! Dummy update for testing."
+        message: "Hello from Getchup!! "
 
    })
 });
