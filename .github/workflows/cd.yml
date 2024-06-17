@@ -21,13 +21,13 @@ jobs:
 
     - name: Run Docker Container
       env:
-        DB_URL: ${{ secrets.DB_URL }}
+        DB_URI: ${{ secrets.DB_URI }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         sudo docker run -d -p 8080:8080 \
           --name getchup_backend-container \
           --restart always \
-          -e DB_URL=${{ secrets.DB_URL }} \
+          -e DB_URI=${{ secrets.DB_URI }} \
           -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
           tinzarpaing/getchup_backend \
           pm2-runtime start app.js
