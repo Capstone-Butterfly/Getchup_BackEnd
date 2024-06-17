@@ -14,7 +14,7 @@ app.use('/api/v1', router);
 app.get("/", (req, res, next) => {
    res.json({
         status:200,
-        message: "Hello from Getchup!! " + process.env.DB_URI
+        message: "Hello from Getchup!! "
 
    })
 });
