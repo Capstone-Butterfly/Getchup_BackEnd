@@ -9,10 +9,8 @@ const LocationDetailSchema = new Schema({
 
 const ProfileSchema = new Schema({
   user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  location_detail: { type: [LocationDetailSchema], default: [] },
   music: { type: Array, default: [] },
   phone: { type: String, required: true },
-  dob: { type: Date, required: true },
   user_type: { type: Number, enum: [1, 2, 3] },
   task_reminder: { type: Boolean, default: false },
   movement_reminder: { type: Boolean, default: false },
