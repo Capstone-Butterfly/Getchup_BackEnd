@@ -6,7 +6,7 @@ const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key';
 
 // User Registration
 const createAccount = async (req, res) => {
-  const { first_name, last_name, email, password, phone, dob, location_detail } = req.body;
+  const { first_name, last_name, email, password, phone } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -26,8 +26,6 @@ const createAccount = async (req, res) => {
     const newProfile = new Profile({
       user_id: savedUser._id,
       phone,
-      dob,
-      location_detail, 
     });
 
     await newProfile.save();
