@@ -48,6 +48,9 @@ const TaskSchema = new Schema({
         type: Date,
         default: Date.now
       },
+      due_date: {
+        type: Date
+      },
       start_date: {
         type: Date
       },
@@ -71,6 +74,10 @@ const TaskSchema = new Schema({
         type: String,
         enum: ['low', 'medium', 'high'],
         default: 'medium'
+      },
+      is_repeated: {
+        type: Boolean,
+        default: false
       }
     });
 
