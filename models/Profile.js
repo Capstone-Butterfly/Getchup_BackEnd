@@ -1,12 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const LocationDetailSchema = new Schema({
-  name: { type: String, required: true },
-  lat: { type: String, required: true },
-  long: { type: String, required: true }
-});
-
 const ProfileSchema = new Schema({
   user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   music: { type: Array, default: [] },
