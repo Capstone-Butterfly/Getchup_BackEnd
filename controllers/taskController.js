@@ -60,7 +60,6 @@ const getTask = async (req, res) => {
 // Function to get tasks by user ID
 const getTasksByUser = async (req, res) => {
   const userId = req.params.userId;
-  console.log("userId : ", userId);
   try {
     const tasks = await Task.find({ user_id: userId }).exec();
     if (tasks.length === 0) {
