@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router({mergeParams:true});
 
 const taskRouter = require('./task');
-const authRouter = require('./auth');
+const authRouter = require('./user');
 const commonTaskRouter = require('./commonTask');
 const surveyRouter = require('./survey')
 
