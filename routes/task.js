@@ -9,6 +9,7 @@ router.get("/tasks/user/:userId", taskCtrl.getTasksByUser);
 router.post("/tasks", taskCtrl.saveTask);
 router.patch('/tasks/:id', taskCtrl.updateTask);
 router.delete('/tasks/:id', taskCtrl.deleteTask);
+router.get('/repeatedTasks', taskCtrl.filterRepeatedTasks);
 
 
 module.exports = router;
