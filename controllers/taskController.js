@@ -124,4 +124,14 @@ const deleteTask = async (req, res) => {
   }
 };
 
-module.exports = { saveTask, getTask, getTasksByUser, updateTask, deleteTask };
+// Filter repeated tasks
+const filterRepeatedTasks = async (req, res) => {
+  try {
+    const repeatedTasks = await Task.find({ is_repeated: true });
+    res.status(200).json(repeatedTasks);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch repeated tasks' });
+  }
+};
+
+module.exports = { saveTask, getTask, getTasksByUser, updateTask, deleteTask, filterRepeatedTasks };
