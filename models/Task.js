@@ -78,6 +78,15 @@ const TaskSchema = new Schema({
       is_repeated: {
         type: Boolean,
         default: false
+      },
+      main_status: {
+        type: String,
+        enum: ['new', 'progress', 'pause', 'complete'],
+        default: 'new'
+      },
+      movement_tracking: {
+        type: Boolean,
+        default: false
       }
     });
 
