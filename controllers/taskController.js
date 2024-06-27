@@ -99,7 +99,10 @@ const updateTask = async (req, res) => {
     "is_repeated",
     "main_status",
     "movement_tracking",
-    "notification_id"
+    "notification_id",
+    "estimate_start_date",
+    "estimate_start_time",
+    "estimate_end_time",
   ];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
