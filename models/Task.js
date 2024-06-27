@@ -11,13 +11,13 @@ const subtaskSchema = new Schema({
       required: true
     },
     start_time: {
-      type: Date
+      type: Number
     },
     pause_time: {
-      type: Date
+      type: Number
     },
     end_time: {
-      type: Date
+      type: Number
     },
     movement: {
       type: Boolean,

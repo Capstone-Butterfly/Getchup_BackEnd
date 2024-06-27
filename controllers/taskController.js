@@ -114,7 +114,33 @@ const updateTask = async (req, res) => {
       return res.status(404).send();
     }
 
-    updates.forEach((update) => (task[update] = req.body[update]));
+    updates.forEach((update) => {
+      if (update === "subtask") {
+        const subtaskUpdates = req.body.subtask;
+        if (Array.isArray(subtaskUpdates) && subtaskUpdates.length > 0) {
+          subtaskUpdates.forEach((subtaskUpdate) => {
+            const subtaskIndex = subtaskUpdate.index;
+            if (task.subtask[subtaskIndex]) {
+              Object.keys(subtaskUpdate).forEach((key) => {
+                if (key !== "index") {
+                  task.subtask[subtaskIndex][key] = subtaskUpdate[key];
+                }
+              });
+            }
+          });
+        }
+      } else {
+        task[update] = req.body[update];
+      }
+    });
+
+    if (req.body.main_status) {
+      task.main_status = req.body.main_status;
+    }
+
+    if (req.body.end_date) {
+      task.end_date = req.body.end_date;
+    }
     await task.save();
     res.status(200).send(task);
   } catch (error) {
