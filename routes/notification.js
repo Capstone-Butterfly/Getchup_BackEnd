@@ -1,14 +1,9 @@
 const express = require('express');
-const router = express.Router();
-const { scheduleNotifications } = require('../controllers/notificationController');
+const router = express.Router({mergeParams:true});
 
-router.post('/push/schedule', async (req, res) => { //endpoint for scheduling notifications in the backend
-    try {
-        await scheduleNotifications();
-        res.status(200).send('Notifications scheduled successfully');
-    } catch (error) {
-        res.status(500).send('Error scheduling notifications');
-    }
-});
+const notificationCtrl = require('../controllers/notificationController');
+
+// Route to save a notification
+router.post('/notifications', notificationCtrl.saveNotification);
 
 module.exports = router;

@@ -4,12 +4,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const router = require('./routes'); //same as ('./routes/index')
 require('dotenv').config();
-const notificationRoutes = require('./notification');
 
 require('./models/db');
 
 app.use(express.json());
-app.use('/notifications', notificationRoutes);
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/v1', router);
