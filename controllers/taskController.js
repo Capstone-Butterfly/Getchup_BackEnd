@@ -138,7 +138,7 @@ const deleteTask = async (req, res) => {
 // Filter repeated tasks
 const filterRepeatedTasks = async (req, res) => {
   try {
-    const repeatedTasks = await Task.find({ is_repeated: true });
+    const repeatedTasks = await Task.find({ main_status: "complete" });
     res.status(200).json(repeatedTasks);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch repeated tasks' });

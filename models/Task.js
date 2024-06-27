@@ -87,6 +87,9 @@ const TaskSchema = new Schema({
       movement_tracking: {
         type: Boolean,
         default: false
+      },
+      notification_id: {
+        type: String,
       }
     });
 
