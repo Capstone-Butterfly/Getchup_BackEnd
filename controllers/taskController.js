@@ -2,10 +2,10 @@ const Task = require("../models/Task.js");
 const getSubTasksFromOpenAI = require("../services/openAIService.js");
 
 // Create a new task
-const saveTask = async (req, res) => {
+const getAISubTasks = async (req, res) => {
   try {
     const { title, ...taskData } = req.body;
-
+    console.log(title);
     // Get subtasks from OpenAI
     const subTaskResponse = await getSubTasksFromOpenAI(title);
     const subTasks = JSON.parse(subTaskResponse).subtasks;
@@ -21,10 +21,18 @@ const saveTask = async (req, res) => {
         status: "new", // Default status
       })),
     });
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
+const saveTask = async (req, res) => {
+  try {
+    const task = new Task(req.body);
     const result = await task.save();
-    const urlStr = `/api/v1/task/${result.id}`;
-
+    const urlStr = `/api/v1/tasks/${result.id}`;
+    
     // Set content-location header
     res.set("content-location", urlStr);
     res.status(201).json({
@@ -35,6 +43,7 @@ const saveTask = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 
 //get all Tasks or a task by ID
 const getTask = async (req, res) => {
@@ -87,7 +96,13 @@ const updateTask = async (req, res) => {
     "end_time",
     "actual_duration",
     "task_urgency",
-    "is_repeated"
+    "is_repeated",
+    "main_status",
+    "movement_tracking",
+    "notification_id",
+    "estimate_start_date",
+    "estimate_start_time",
+    "estimate_end_time",
   ];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
@@ -103,7 +118,33 @@ const updateTask = async (req, res) => {
       return res.status(404).send();
     }
 
-    updates.forEach((update) => (task[update] = req.body[update]));
+    updates.forEach((update) => {
+      if (update === "subtask") {
+        const subtaskUpdates = req.body.subtask;
+        if (Array.isArray(subtaskUpdates) && subtaskUpdates.length > 0) {
+          subtaskUpdates.forEach((subtaskUpdate) => {
+            const subtaskIndex = subtaskUpdate.index;
+            if (task.subtask[subtaskIndex]) {
+              Object.keys(subtaskUpdate).forEach((key) => {
+                if (key !== "index") {
+                  task.subtask[subtaskIndex][key] = subtaskUpdate[key];
+                }
+              });
+            }
+          });
+        }
+      } else {
+        task[update] = req.body[update];
+      }
+    });
+
+    if (req.body.main_status) {
+      task.main_status = req.body.main_status;
+    }
+
+    if (req.body.end_date) {
+      task.end_date = req.body.end_date;
+    }
     await task.save();
     res.status(200).send(task);
   } catch (error) {
@@ -127,11 +168,11 @@ const deleteTask = async (req, res) => {
 // Filter repeated tasks
 const filterRepeatedTasks = async (req, res) => {
   try {
-    const repeatedTasks = await Task.find({ is_repeated: true });
+    const repeatedTasks = await Task.find({ main_status: "complete" });
     res.status(200).json(repeatedTasks);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch repeated tasks' });
   }
 };
 
-module.exports = { saveTask, getTask, getTasksByUser, updateTask, deleteTask, filterRepeatedTasks };
+module.exports = { getAISubTasks, saveTask, getTask, getTasksByUser, updateTask, deleteTask, filterRepeatedTasks };

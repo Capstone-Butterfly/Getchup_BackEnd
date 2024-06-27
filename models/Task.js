@@ -11,13 +11,13 @@ const subtaskSchema = new Schema({
       required: true
     },
     start_time: {
-      type: Date
+      type: Number
     },
     pause_time: {
-      type: Date
+      type: Number
     },
     end_time: {
-      type: Date
+      type: Number
     },
     movement: {
       type: Boolean,
@@ -27,6 +27,10 @@ const subtaskSchema = new Schema({
       type: String,
       enum: ['new', 'progress', 'pause', 'complete'],
       default: 'new'
+    },
+    duration: {
+      type: Number,
+      default: 0
     }
   }, { _id: false });  // Set _id to false to prevent creation of _id for each subtask
 
@@ -78,6 +82,27 @@ const TaskSchema = new Schema({
       is_repeated: {
         type: Boolean,
         default: false
+      },
+      main_status: {
+        type: String,
+        enum: ['new', 'progress', 'pause', 'complete'],
+        default: 'new'
+      },
+      movement_tracking: {
+        type: Boolean,
+        default: false
+      },
+      notification_id: {
+        type: String,
+      },
+      estimate_start_date: {
+        type: Date
+      },
+      estimate_start_time: {
+        type: Number
+      },
+      estimate_end_time: {
+        type: Number
       }
     });
 

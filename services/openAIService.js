@@ -11,8 +11,8 @@ const getSubTasksFromOpenAI = async (mainTask) => {
       const prompt = `Here is the main task: ${mainTask} , along with estimated times and will it involve the movement for each task . 
       Please generate subtasks based on it without explanation. The JSON structure should follow this pattern:
       subtasks: { [
-        task: "subtask description"
-        time: "5 minutes"
+        "task" : "subtask description"
+        "time" : "5 minutes"
         movement: true or false
       ]
       }
