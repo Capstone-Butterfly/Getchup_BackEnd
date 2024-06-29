@@ -4,8 +4,6 @@ const getTasksbyDate = async (req, res) => {
     try {
         //const { startDate, endDate } = req.query;
         const { startDate, endDate, userId } = req.params;
-        // console.log("startDate", startDate);
-        // console.log("endDate", endDate);
 
         if (!startDate || !endDate || !userId) {
           return res.status(400).json({ message: 'startDate and endDate are required' });
@@ -13,24 +11,9 @@ const getTasksbyDate = async (req, res) => {
 
         const start = new Date(startDate);
         let end = new Date(endDate);
-       
-        // console.log("start", start);
-        // console.log("end", end);
+        end.setUTCHours(23, 59, 59, 999);
 
-         if (start.toDateString() === end.toDateString()) {
-            end = new Date(); 
-        } 
-        else {
-            end = new Date(end.getTime() + end.getTimezoneOffset() * 60000); // Convert to UTC
-            //end.setUTCHours(23, 59, 59, 999); // End of the day in UTC
-            end.setHours(23, 59, 59, 999);
-        }
-           
-        // console.log("start 2 ", start);
-        // console.log("end 2 ", end);
-
-
-        // Fetch tasks within the date range
+        // Fetch tasks within the date range with userId
         const tasks = await Task.find({
             user_id: userId,
             estimate_start_date: { $gte: start, $lte: end }
@@ -43,8 +26,12 @@ const getTasksbyDate = async (req, res) => {
         const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
     
         res.json({
-            // created_datetime: tasks.map(task => ({
-            //     created_datetime: task.created_datetime
+            // data : tasks.map(task => ({
+            //   estimate_start_date: task.estimate_start_date,
+            //   title: task.title,
+            //   status: task.main_status,
+            //   taskId: task._id,
+            //   subtask: task.subtask,
             // })),
           totalTasks,
           completedTasks,
