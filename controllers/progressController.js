@@ -75,27 +75,28 @@ const getTasksByUserId = async (req, res) => {
 
 const getTodayProgressChart = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { startDate, endDate, userId } = req.params;
 
     // Get today's date in UTC
-    const today = new Date();
-    const sample = new Date();
-    console.log("sample" + sample);
-    today.setHours(today.getHours() - 7);
-    console.log(today.toISOString());
-    today.setUTCHours(0, 0, 0, 0); 
-    console.log("todayStart:", today.toISOString());
+    // const today = new Date();
+    const dayStart = new Date(startDate);
+    dayStart.setUTCHours(0, 0, 0, 0); 
+    // today.setHours(today.getHours() - 7);
+    // console.log(today.toISOString());
+    // today.setUTCHours(0, 0, 0, 0); 
+    console.log("dayStart:", dayStart);
 
 
-    const todayEnd = new Date(today);
-    todayEnd.setUTCHours(23, 59, 59, 999);
-    console.log("todayEnd:", todayEnd.toISOString());
+    const dayEnd = new Date(endDate);
+    dayEnd.setUTCHours(23, 59, 59, 999);
+    // console.log("dayEnd:", todayEnd.toISOString());
+    console.log("dayEnd:", dayEnd);
 
     const tasks = await Task.find({
       user_id: userId,
       estimate_start_date: {
-        $gte: today,
-        $lte: todayEnd,
+        $gte: dayStart,
+        $lte: dayEnd,
       },
     });
     console.log("tasks" + tasks);
