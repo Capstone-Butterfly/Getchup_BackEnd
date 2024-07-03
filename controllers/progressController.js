@@ -78,18 +78,13 @@ const getTodayProgressChart = async (req, res) => {
     const { startDate, endDate, userId } = req.params;
 
     // Get today's date in UTC
-    // const today = new Date();
     const dayStart = new Date(startDate);
     dayStart.setUTCHours(0, 0, 0, 0); 
-    // today.setHours(today.getHours() - 7);
-    // console.log(today.toISOString());
-    // today.setUTCHours(0, 0, 0, 0); 
     console.log("dayStart:", dayStart);
 
 
     const dayEnd = new Date(endDate);
     dayEnd.setUTCHours(23, 59, 59, 999);
-    // console.log("dayEnd:", todayEnd.toISOString());
     console.log("dayEnd:", dayEnd);
 
     const tasks = await Task.find({
@@ -102,10 +97,10 @@ const getTodayProgressChart = async (req, res) => {
     console.log("tasks" + tasks);
 
     const groupedTask = {
-      morning: { tasks: [], completeCount: 0, incompleteCount: 0 },
-      afternoon: { tasks: [], completeCount: 0, incompleteCount: 0 },
-      evening: { tasks: [], completeCount: 0, incompleteCount: 0 },
-      night: { tasks: [], completeCount: 0, incompleteCount: 0 },
+      morning: {  completeCount: 0, incompleteCount: 0, tasks: [] },
+      afternoon: {  completeCount: 0, incompleteCount: 0, tasks: [] },
+      evening: { completeCount: 0, incompleteCount: 0, tasks: [] },
+      night: {  completeCount: 0, incompleteCount: 0, tasks: [] },
     };
 
     tasks.forEach((task) => {
@@ -163,12 +158,14 @@ const getTodayProgressChart = async (req, res) => {
       (task) => task.main_status === "complete"
     ).length;
     const totalIncompleteTasks = totalTasks - totalCompletedTasks;
+    const completionPercentage = totalTasks === 0 ? 0 : Math.round((totalCompletedTasks / totalTasks) * 100);
 
     res.status(200).json({
       groupedTask,
       totalTasks,
       totalCompletedTasks,
       totalIncompleteTasks,
+      completionPercentage,
       mostProductiveTime,
       leastProductiveTime
     });
