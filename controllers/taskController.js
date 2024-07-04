@@ -1,4 +1,5 @@
 const Task = require("../models/Task.js");
+const mongoose = require("mongoose");
 const getSubTasksFromOpenAI = require("../services/openAIService.js");
 
 // Create a new task
@@ -167,14 +168,31 @@ const deleteTask = async (req, res) => {
 // Filter repeated tasks
 const filterRepeatedTasks = async (req, res) => {
   const { userId } = req.params;
+  const objectId = new mongoose.Types.ObjectId(userId);
   try {
-    const repeatedTasks = await Task.find({
-      user_id: userId,
-      main_status: "complete",
-    });
+    const repeatedTasks = await Task.aggregate([
+      {
+        $match: {
+          user_id: objectId,
+          main_status: "complete",
+        },
+      },
+      {
+        $group: {
+          _id: "$title",
+          task: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$task",
+        },
+      },
+    ]);
+
     res.status(200).json(repeatedTasks);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch repeated tasks" });
+    res.status(500).json(error.message);
   }
 };
 
