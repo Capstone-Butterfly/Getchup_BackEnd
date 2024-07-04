@@ -99,6 +99,7 @@ const updateTask = async (req, res) => {
     "is_repeated",
     "main_status",
     "movement_tracking",
+    "task_reminder",
     "notification_id",
     "estimate_start_date",
     "estimate_start_time",
