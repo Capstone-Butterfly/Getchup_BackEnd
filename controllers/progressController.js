@@ -21,28 +21,34 @@ const getWeeklyProgressChart = async (req, res) => {
         });
 
         const sortedTasksByDay = {
-            Sunday: { totalTasks: 0, completedTasks: 0 },
-            Monday: { totalTasks: 0, completedTasks: 0 },
-            Tuesday: { totalTasks: 0, completedTasks: 0 },
-            Wednesday: { totalTasks: 0, completedTasks: 0 },
-            Thursday: { totalTasks: 0, completedTasks: 0 },
-            Friday: { totalTasks: 0, completedTasks: 0 },
-            Saturday: { totalTasks: 0, completedTasks: 0 }
+            Sunday: { completeCount: 0, incompleteCount: 0 },
+            Monday: { completeCount: 0, incompleteCount: 0 },
+            Tuesday: { completeCount: 0, incompleteCount: 0 },
+            Wednesday: { completeCount: 0, incompleteCount: 0 },
+            Thursday: { completeCount: 0, incompleteCount: 0 },
+            Friday: { completeCount: 0, incompleteCount: 0 },
+            Saturday: { completeCount: 0, incompleteCount: 0 }
         };
 
         tasks.forEach(task => {
             const dayOfWeek = moment(task.estimate_start_date).tz('America/Los_Angeles').format('dddd'); // Get day of week in local timezone
             //sortedTasksByDay[dayOfWeek].tasks.push(task);
-            sortedTasksByDay[dayOfWeek].totalTasks += 1;
-            if (task.main_status === 'complete') {
-                sortedTasksByDay[dayOfWeek].completedTasks += 1;
+            // sortedTasksByDay[dayOfWeek].totalTasks += 1;
+            // if (task.main_status === 'complete') {
+            //     sortedTasksByDay[dayOfWeek].completedTasks += 1;
+            // }
+            if (task.main_status === "complete") {
+              sortedTasksByDay[dayOfWeek].completeCount++;
+            } else {
+              sortedTasksByDay[dayOfWeek].incompleteCount++;
             }
         });
     
         let perfectDaysCount = 0;
         for (const day in sortedTasksByDay) {
             const dayData = sortedTasksByDay[day];
-            if (dayData.totalTasks > 0 && dayData.totalTasks === dayData.completedTasks) {
+            const totalTasks = dayData.completeCount + dayData.incompleteCount;
+            if (totalTasks > 0 && totalTasks === dayData.completeCount) {
                 perfectDaysCount += 1;
             }
         }
