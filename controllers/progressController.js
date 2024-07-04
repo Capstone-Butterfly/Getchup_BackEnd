@@ -1,6 +1,7 @@
 const Task = require("../models/Task.js");
+const moment = require('moment-timezone');
 
-const getTasksbyDate = async (req, res) => {
+const getWeeklyProgressChart = async (req, res) => {
     try {
         //const { startDate, endDate } = req.query;
         const { startDate, endDate, userId } = req.params;
@@ -18,58 +19,47 @@ const getTasksbyDate = async (req, res) => {
             user_id: userId,
             estimate_start_date: { $gte: start, $lte: end }
         });
+
+        const sortedTasksByDay = {
+            Sunday: { completeCount: 0, incompleteCount: 0 },
+            Monday: { completeCount: 0, incompleteCount: 0 },
+            Tuesday: { completeCount: 0, incompleteCount: 0 },
+            Wednesday: { completeCount: 0, incompleteCount: 0 },
+            Thursday: { completeCount: 0, incompleteCount: 0 },
+            Friday: { completeCount: 0, incompleteCount: 0 },
+            Saturday: { completeCount: 0, incompleteCount: 0 }
+        };
+
+        tasks.forEach(task => {
+            const dayOfWeek = moment(task.estimate_start_date).tz('America/Los_Angeles').format('dddd'); // Get day of week in local timezone
+            //sortedTasksByDay[dayOfWeek].tasks.push(task);
+            // sortedTasksByDay[dayOfWeek].totalTasks += 1;
+            // if (task.main_status === 'complete') {
+            //     sortedTasksByDay[dayOfWeek].completedTasks += 1;
+            // }
+            if (task.main_status === "complete") {
+              sortedTasksByDay[dayOfWeek].completeCount++;
+            } else {
+              sortedTasksByDay[dayOfWeek].incompleteCount++;
+            }
+        });
     
-        // Calculate stats
-        const totalTasks = tasks.length;
-        const completedTasks = tasks.filter(task => task.main_status === 'complete').length;
-        const incompleteTasks = totalTasks - completedTasks;
-        const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+        let perfectDaysCount = 0;
+        for (const day in sortedTasksByDay) {
+            const dayData = sortedTasksByDay[day];
+            const totalTasks = dayData.completeCount + dayData.incompleteCount;
+            if (totalTasks > 0 && totalTasks === dayData.completeCount) {
+                perfectDaysCount += 1;
+            }
+        }
     
         res.json({
-            // data : tasks.map(task => ({
-            //   estimate_start_date: task.estimate_start_date,
-            //   title: task.title,
-            //   status: task.main_status,
-            //   taskId: task._id,
-            //   subtask: task.subtask,
-            // })),
-          totalTasks,
-          completedTasks,
-          incompleteTasks,
-          completionPercentage
+          sortedTasksByDay,
+          perfectDaysCount
         });
+
       } catch (error) {
         res.status(500).json({ message: error.message });
-    }
-};
-
-const getTasksByUserId = async (req, res) => {
-    const { userId } = req.params;
-  
-    try {
-      if (!userId) {
-        return res.status(400).json({ message: 'userId is required' });
-      }
-  
-      // Fetch tasks by user_id
-      const tasks = await Task.find({
-        user_id: userId
-      });
-  
-      // Calculate stats
-      const totalTasks = tasks.length;
-      const completedTasks = tasks.filter(task => task.main_status === 'complete').length;
-      const incompleteTasks = totalTasks - completedTasks;
-      const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
-  
-      res.status(200).json({
-        totalTasks,
-        completedTasks,
-        incompleteTasks,
-        completionPercentage
-      });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
     }
 };
 
@@ -80,12 +70,9 @@ const getTodayProgressChart = async (req, res) => {
     // Get today's date in UTC
     const dayStart = new Date(startDate);
     dayStart.setUTCHours(0, 0, 0, 0); 
-    console.log("dayStart:", dayStart);
-
 
     const dayEnd = new Date(endDate);
     dayEnd.setUTCHours(23, 59, 59, 999);
-    console.log("dayEnd:", dayEnd);
 
     const tasks = await Task.find({
       user_id: userId,
@@ -94,7 +81,6 @@ const getTodayProgressChart = async (req, res) => {
         $lte: dayEnd,
       },
     });
-    console.log("tasks" + tasks);
 
     const groupedTask = {
       morning: {  completeCount: 0, incompleteCount: 0, tasks: [] },
@@ -107,7 +93,6 @@ const getTodayProgressChart = async (req, res) => {
       const startTime = task.estimate_start_time;
       const date = new Date(startTime);
       const hours = date.getUTCHours();
-      console.log("hours" + hours);
 
       if (hours >= 6 && hours < 12) {
         groupedTask.morning.tasks.push(task);
@@ -174,5 +159,4 @@ const getTodayProgressChart = async (req, res) => {
   }
 };
 
-
-module.exports = { getTasksbyDate, getTasksByUserId, getTodayProgressChart };
+module.exports = { getWeeklyProgressChart, getTodayProgressChart };
