@@ -34,7 +34,6 @@ const evaluateADHDLevel = (answers) => {
     
     if (answers.hasOwnProperty(question)) {
       const answer = answers[question][0].options; 
-      console.log("question in answers", answer + count.toString());
       totalScore += pointValues[answer];
     }
   }
@@ -62,7 +61,6 @@ const evaluateADHDLevel = (answers) => {
 const getSurveyResult = async (req, res) => {
     try {
         const answers = req.body;
-        console.log(answers);
         const evaluation = evaluateADHDLevel(answers);
         res.status(200).json(evaluation);
     } catch (error) {
