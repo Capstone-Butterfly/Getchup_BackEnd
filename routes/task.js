@@ -10,7 +10,7 @@ router.post("/tasks/aisubtasks", taskCtrl.getAISubTasks)
 router.post("/tasks", taskCtrl.saveTask);
 router.patch('/tasks/:id', taskCtrl.updateTask);
 router.delete('/tasks/:id', taskCtrl.deleteTask);
-router.get('/repeatedTasks', taskCtrl.filterRepeatedTasks);
+router.get('/repeatedTasks/:userId', taskCtrl.filterRepeatedTasks);
 
 
 module.exports = router;
