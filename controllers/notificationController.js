@@ -8,7 +8,6 @@ const saveNotification = async (req, res) => {
 
         const newNotification = new Notification({
             identifier,
-            user_id,
             task_id,
             message,
             sent_at,
@@ -23,6 +22,4 @@ const saveNotification = async (req, res) => {
     }
 };
 
-module.exports = {
-    saveNotification
-};
+module.exports = { saveNotification };
