@@ -92,6 +92,10 @@ const TaskSchema = new Schema({
         type: Boolean,
         default: false
       },
+      task_reminder: {
+        type: Boolean,
+        default: false
+      },
       notification_id: {
         type: String,
       },

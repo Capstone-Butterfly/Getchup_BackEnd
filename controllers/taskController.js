@@ -1,4 +1,5 @@
 const Task = require("../models/Task.js");
+const mongoose = require("mongoose");
 const getSubTasksFromOpenAI = require("../services/openAIService.js");
 
 // Create a new task
@@ -32,7 +33,7 @@ const saveTask = async (req, res) => {
     const task = new Task(req.body);
     const result = await task.save();
     const urlStr = `/api/v1/tasks/${result.id}`;
-    
+
     // Set content-location header
     res.set("content-location", urlStr);
     res.status(201).json({
@@ -43,7 +44,6 @@ const saveTask = async (req, res) => {
     res.status(500).json(error);
   }
 };
-
 
 //get all Tasks or a task by ID
 const getTask = async (req, res) => {
@@ -99,6 +99,7 @@ const updateTask = async (req, res) => {
     "is_repeated",
     "main_status",
     "movement_tracking",
+    "task_reminder",
     "notification_id",
     "estimate_start_date",
     "estimate_start_time",
@@ -167,12 +168,41 @@ const deleteTask = async (req, res) => {
 
 // Filter repeated tasks
 const filterRepeatedTasks = async (req, res) => {
+  const { userId } = req.params;
+  const objectId = new mongoose.Types.ObjectId(userId);
   try {
-    const repeatedTasks = await Task.find({ main_status: "complete" });
+    const repeatedTasks = await Task.aggregate([
+      {
+        $match: {
+          user_id: objectId,
+          main_status: "complete",
+        },
+      },
+      {
+        $group: {
+          _id: "$title",
+          task: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$task",
+        },
+      },
+    ]);
+
     res.status(200).json(repeatedTasks);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch repeated tasks' });
+    res.status(500).json(error.message);
   }
 };
 
-module.exports = { getAISubTasks, saveTask, getTask, getTasksByUser, updateTask, deleteTask, filterRepeatedTasks };
+module.exports = {
+  getAISubTasks,
+  saveTask,
+  getTask,
+  getTasksByUser,
+  updateTask,
+  deleteTask,
+  filterRepeatedTasks,
+};
