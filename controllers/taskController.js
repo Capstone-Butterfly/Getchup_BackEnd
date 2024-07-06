@@ -1,4 +1,5 @@
 const Task = require("../models/Task.js");
+const Notification = require("../models/Notification.js");
 const mongoose = require("mongoose");
 const getSubTasksFromOpenAI = require("../services/openAIService.js");
 
@@ -34,8 +35,19 @@ const saveTask = async (req, res) => {
     const result = await task.save();
     const urlStr = `/api/v1/tasks/${result.id}`;
 
-    // Set content-location header
     res.set("content-location", urlStr);
+
+    if (result.notification_id) {
+      const notification = new Notification({
+        identifier: result.notification_id,
+        user_id: result.user_id,
+        task_id: result.id,
+        message: result.title,
+      });
+
+      await notification.save();
+    }
+
     res.status(201).json({
       url: urlStr,
       data: result,
@@ -153,6 +165,37 @@ const updateTask = async (req, res) => {
   }
 };
 
+// change Task status to Complete manually
+const manualCompleteTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    
+    const task = await Task.findById(taskId);
+    
+    if (!task) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    // Update main_status to "complete"
+    task.main_status = 'complete';
+
+    // Update all subtasks' status to "complete"
+    task.subtask.forEach(subtask => {
+      subtask.status = 'complete';
+    });
+
+    // Save the updated task
+    const updatedTask = await task.save();
+
+    res.status(200).json({
+      message: 'Task and subtasks updated to complete',
+      data: updatedTask,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Delete a task
 const deleteTask = async (req, res) => {
   try {
@@ -203,6 +246,7 @@ module.exports = {
   getTask,
   getTasksByUser,
   updateTask,
+  manualCompleteTask,
   deleteTask,
   filterRepeatedTasks,
 };
