@@ -35,6 +35,21 @@ const saveTask = async (req, res) => {
     const result = await task.save();
     const urlStr = `/api/v1/tasks/${result.id}`;
 
+    // Calculate the sent_at field
+    const estimateStartDate = new Date(req.body.estimate_start_date);
+    const estimateStartTime = parseInt(req.body.estimate_start_time, 10);
+    const estimateDateTime = new Date(estimateStartDate.getTime() + estimateStartTime);
+
+    let sentAt;
+    const now = new Date();
+    const diff = (estimateDateTime - now) / 1000; // Difference in seconds
+
+    if (diff >= 45 * 60) {
+      sentAt = new Date(estimateDateTime.getTime() - 45 * 60 * 1000); // 45 minutes before estimateDateTime
+    } else {
+      sentAt = new Date(now.getTime() + 10 * 1000); // 10 seconds from now
+    }
+
     res.set("content-location", urlStr);
 
     if (result.notification_id) {
@@ -43,6 +58,7 @@ const saveTask = async (req, res) => {
         user_id: result.user_id,
         task_id: result.id,
         message: result.title,
+        sent_at: sentAt,
       });
 
       await notification.save();
