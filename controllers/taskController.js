@@ -239,8 +239,8 @@ const filterRepeatedTasks = async (req, res) => {
       },
       {
         $group: {
-          _id: "$title",
-          task: { $first: "$$ROOT" },
+          _id: { $toLower: "$title" },
+          task: { $last: "$$ROOT" },
         },
       },
       {

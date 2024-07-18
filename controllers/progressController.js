@@ -33,8 +33,8 @@ const getWeeklyProgressChart = async (req, res) => {
     };
 
     tasks.forEach((task) => {
-      const dayOfWeek = moment(task.estimate_start_date)
-        .tz("America/Los_Angeles")
+      const dayOfWeek = moment.utc(task.estimate_start_date)
+        // .tz("America/Los_Angeles")
         .format("dddd"); // Get day of week in local timezone
       //sortedTasksByDay[dayOfWeek].tasks.push(task);
       // sortedTasksByDay[dayOfWeek].totalTasks += 1;
@@ -87,7 +87,7 @@ const getTodayProgressChart = async (req, res) => {
 
     const groupedTask = {
       morning: { completeCount: 0, incompleteCount: 0 },
-      afternoon: { completeCount: 0, incompleteCount: 0},
+      afternoon: { completeCount: 0, incompleteCount: 0 },
       evening: { completeCount: 0, incompleteCount: 0 },
       night: { completeCount: 0, incompleteCount: 0 },
     };
@@ -166,4 +166,72 @@ const getTodayProgressChart = async (req, res) => {
   }
 };
 
-module.exports = { getWeeklyProgressChart, getTodayProgressChart };
+const getMonthlyProgressChart = async (req, res) => {
+  try {
+    const { startDate, endDate, userId } = req.params;
+
+    if (!startDate || !endDate || !userId) {
+      return res
+        .status(400)
+        .json({ message: "startDate, endDate, and userId are required" });
+    }
+
+    const start = moment(startDate).startOf('day');
+    let end = moment(endDate).endOf('day');
+
+    if (!start.isValid() || !end.isValid()) {
+      return res.status(400).json({ message: "Invalid startDate or endDate" });
+    }
+
+    end = end
+      .endOf("month")
+      .set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
+
+    const tasks = await Task.find({
+      user_id: userId,
+      estimate_start_date: { $gte: start.toDate(), $lte: end.toDate() },
+    });
+
+    const daysInMonth = start.daysInMonth();
+    console.log("daysInMonth: " + daysInMonth);
+    const sortedTasksByDay = {};
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      sortedTasksByDay[day] = { completeCount: 0, incompleteCount: 0 };
+    }
+
+    tasks.forEach((task) => {
+      const dayOfMonth = moment.utc(task.estimate_start_date).date();
+        // .tz("America/Los_Angeles")
+        // .date();
+
+      if (task.main_status === "complete") {
+        sortedTasksByDay[dayOfMonth].completeCount++;
+      } else {
+        sortedTasksByDay[dayOfMonth].incompleteCount++;
+      }
+    });
+
+    let perfectDaysCount = 0;
+    for (const day in sortedTasksByDay) {
+      const dayData = sortedTasksByDay[day];
+      const totalTasks = dayData.completeCount + dayData.incompleteCount;
+      if (totalTasks > 0 && totalTasks === dayData.completeCount) {
+        perfectDaysCount += 1;
+      }
+    }
+
+    res.json({
+      sortedTasksByDay,
+      perfectDaysCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getWeeklyProgressChart,
+  getTodayProgressChart,
+  getMonthlyProgressChart,
+};
