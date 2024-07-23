@@ -5,12 +5,12 @@ const saveNotification = async (req, res) => {
         const notification = new Notification(req.body);
         const result = await notification.save();
         const urlStr = `/api/v1/notifications/${result.id}`;
-        console.log("saving")
+        //console.log("saving")
         // Set content-location header
         res.set("content-location", urlStr);
         res.status(201).json({ url: urlStr, data: result });
     } catch (error) {
-        console.log("not saving")
+        //console.log("not saving")
         res.status(500).json({ message: 'Error saving notification' });
     }
 };

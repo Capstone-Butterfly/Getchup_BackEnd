@@ -7,7 +7,7 @@ const getSubTasksFromOpenAI = require("../services/openAIService.js");
 const getAISubTasks = async (req, res) => {
   try {
     const { title, ...taskData } = req.body;
-    console.log(title);
+    //console.log(title);
     // Get subtasks from OpenAI
     const subTaskResponse = await getSubTasksFromOpenAI(title);
     const subTasks = JSON.parse(subTaskResponse).subtasks;

@@ -193,7 +193,7 @@ const getMonthlyProgressChart = async (req, res) => {
     });
 
     const daysInMonth = start.daysInMonth();
-    console.log("daysInMonth: " + daysInMonth);
+    //console.log("daysInMonth: " + daysInMonth);
     const sortedTasksByDay = {};
 
     for (let day = 1; day <= daysInMonth; day++) {
